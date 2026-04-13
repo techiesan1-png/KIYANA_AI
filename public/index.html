@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>KIYANA – AI Suite</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
   --bg:#000; --surface:#0a0a0a; --surface2:#161616; --surface3:#222;
   --text:#f0f0f0; --dim:#666; --accent:#fff;
   --sidebar-w:270px;
+  --green:#4ade80; --blue:#60a5fa; --purple:#c084fc; --orange:#fb923c;
 }
 
 body {
@@ -21,9 +24,7 @@ body {
 ::-webkit-scrollbar { width:4px; }
 ::-webkit-scrollbar-thumb { background:#2a2a2a; border-radius:2px; }
 
-/* ═══════════════════════════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════════════════════════ */
+/* ═══ SIDEBAR ═══════════════════════════════════════════════════════════════ */
 #sidebar {
   width:var(--sidebar-w); height:100vh; height:100dvh;
   background:var(--surface); border-right:1px solid var(--surface2);
@@ -34,7 +35,6 @@ body {
   padding-bottom:env(safe-area-inset-bottom);
 }
 #sidebar.open { transform:translateX(0); }
-
 .sidebar-header {
   padding:24px 20px 16px;
   padding-top:max(24px, calc(env(safe-area-inset-top) + 12px));
@@ -44,61 +44,37 @@ body {
 .sidebar-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; letter-spacing:.1em; }
 .sidebar-close { background:none; border:none; color:var(--dim); cursor:pointer; padding:4px; }
 .sidebar-close svg { width:20px; height:20px; }
-
 .sidebar-new {
   margin:12px 16px;
   background:var(--surface2); border:1px solid var(--surface3);
   color:var(--text); border-radius:14px; padding:12px 16px;
   display:flex; align-items:center; gap:10px;
-  cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.9rem;
-  transition:.15s;
+  cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.9rem; transition:.15s;
 }
 .sidebar-new:active { background:var(--surface3); }
 .sidebar-new svg { width:18px; height:18px; color:var(--dim); flex-shrink:0; }
-
-.sidebar-sessions {
-  flex:1; overflow-y:auto; padding:8px 10px;
-  display:flex; flex-direction:column; gap:4px;
-}
-
+.sidebar-sessions { flex:1; overflow-y:auto; padding:8px 10px; display:flex; flex-direction:column; gap:4px; }
 .session-item {
   padding:12px 14px; border-radius:12px; cursor:pointer;
-  border:1px solid transparent; transition:.15s;
-  position:relative;
+  border:1px solid transparent; transition:.15s; position:relative;
 }
 .session-item:hover, .session-item:active { background:var(--surface2); }
 .session-item.active { background:var(--surface2); border-color:var(--surface3); }
-.session-name {
-  font-size:.88rem; white-space:nowrap; overflow:hidden;
-  text-overflow:ellipsis; padding-right:28px; color:var(--text);
-}
+.session-name { font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:28px; color:var(--text); }
 .session-meta { font-size:.74rem; color:var(--dim); margin-top:3px; }
 .session-del {
   position:absolute; right:10px; top:50%; transform:translateY(-50%);
   background:none; border:none; color:#444; cursor:pointer;
-  font-size:1.1rem; line-height:1; padding:4px;
-  opacity:0; transition:.15s;
+  font-size:1.1rem; line-height:1; padding:4px; opacity:0; transition:.15s;
 }
 .session-item:hover .session-del { opacity:1; }
 .session-del:active { color:#f0f0f0; }
-
 .sidebar-empty { padding:32px 16px; text-align:center; color:var(--dim); font-size:.85rem; }
-
-#sidebarMask {
-  position:fixed; inset:0; background:rgba(0,0,0,.6);
-  z-index:299; display:none;
-}
+#sidebarMask { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:299; display:none; }
 #sidebarMask.show { display:block; }
 
-/* ═══════════════════════════════════════════════════════
-   MAIN LAYOUT
-═══════════════════════════════════════════════════════ */
-#main {
-  flex:1; display:flex; flex-direction:column;
-  height:100vh; height:100dvh; overflow:hidden;
-  transition:margin-left .28s cubic-bezier(.4,0,.2,1);
-}
-
+/* ═══ MAIN ══════════════════════════════════════════════════════════════════ */
+#main { flex:1; display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; }
 header {
   padding:16px 20px;
   padding-top:max(16px, calc(env(safe-area-inset-top) + 8px));
@@ -110,7 +86,6 @@ header {
 .header-left { display:flex; align-items:center; gap:12px; }
 .brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; letter-spacing:.12em; }
 .header-right { display:flex; gap:8px; }
-
 .icon-btn {
   background:var(--surface2); border:none; color:var(--text);
   width:42px; height:42px; border-radius:13px;
@@ -126,20 +101,80 @@ header {
   padding-bottom:16px; scroll-behavior:smooth;
 }
 
-/* ── Messages ─────────────────────────────────────────── */
-.msg { max-width:82%; animation:fadeUp .3s ease-out forwards; }
+/* ═══ MESSAGES ══════════════════════════════════════════════════════════════ */
+.msg { max-width:86%; animation:fadeUp .3s ease-out forwards; }
 .msg.user { align-self:flex-end; }
-.msg.ai   { align-self:flex-start; }
+.msg.ai   { align-self:flex-start; max-width:92%; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 .bubble {
   padding:13px 17px; border-radius:20px;
-  font-size:.95rem; line-height:1.65;
-  word-break:break-word; white-space:pre-wrap;
+  font-size:.95rem; line-height:1.7;
+  word-break:break-word;
 }
-.msg.user .bubble { background:var(--surface3); border-bottom-right-radius:4px; }
+.msg.user .bubble { background:var(--surface3); border-bottom-right-radius:4px; white-space:pre-wrap; }
 .msg.ai   .bubble { background:var(--surface); border:1px solid var(--surface2); border-bottom-left-radius:4px; }
 
+/* ═══ MARKDOWN RENDERING ════════════════════════════════════════════════════ */
+.bubble h1,.bubble h2,.bubble h3,.bubble h4 {
+  font-family:'Syne',sans-serif; margin:14px 0 8px; line-height:1.3;
+}
+.bubble h1 { font-size:1.2rem; }
+.bubble h2 { font-size:1.1rem; }
+.bubble h3 { font-size:1rem; color:var(--dim); }
+.bubble p { margin:6px 0; }
+.bubble ul,.bubble ol { padding-left:20px; margin:6px 0; }
+.bubble li { margin:3px 0; }
+.bubble strong { color:#fff; font-weight:600; }
+.bubble em { color:#ccc; font-style:italic; }
+.bubble a { color:var(--blue); text-decoration:none; }
+.bubble a:hover { text-decoration:underline; }
+.bubble hr { border:none; border-top:1px solid var(--surface3); margin:12px 0; }
+
+/* ── Tables ── */
+.bubble table { width:100%; border-collapse:collapse; margin:10px 0; font-size:.88rem; }
+.bubble th { background:var(--surface2); padding:8px 10px; text-align:left; font-weight:600; border:1px solid var(--surface3); }
+.bubble td { padding:7px 10px; border:1px solid var(--surface3); }
+.bubble tr:nth-child(even) td { background:rgba(255,255,255,.02); }
+
+/* ── Inline code ── */
+.bubble code:not(.hljs) {
+  background:var(--surface2); color:var(--green);
+  padding:2px 6px; border-radius:5px; font-size:.87em;
+  font-family:'Courier New',monospace; border:1px solid var(--surface3);
+}
+
+/* ── Code blocks ── */
+.code-block {
+  margin:10px 0; border-radius:12px; overflow:hidden;
+  border:1px solid var(--surface3); background:#0d1117;
+}
+.code-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 14px; background:#161b22; border-bottom:1px solid var(--surface3);
+}
+.code-lang {
+  font-size:.75rem; color:var(--dim); font-family:'Courier New',monospace;
+  text-transform:uppercase; letter-spacing:.05em;
+}
+.code-copy {
+  background:none; border:1px solid var(--surface3); color:var(--dim);
+  border-radius:6px; padding:3px 10px; font-size:.75rem; cursor:pointer;
+  font-family:'DM Sans',sans-serif; transition:.15s; display:flex; align-items:center; gap:5px;
+}
+.code-copy:hover { color:var(--text); border-color:#444; }
+.code-copy.copied { color:var(--green); border-color:var(--green); }
+.code-block pre { margin:0; padding:14px; overflow-x:auto; }
+.code-block pre code { font-size:.85rem; line-height:1.6; font-family:'Courier New',monospace; background:none; border:none; padding:0; color:inherit; }
+
+/* ── Blockquote ── */
+.bubble blockquote {
+  border-left:3px solid var(--purple); padding:6px 12px; margin:8px 0;
+  background:rgba(192,132,252,.06); border-radius:0 8px 8px 0;
+  color:#ccc; font-style:italic;
+}
+
+/* ── Image ── */
 .img-wrap { margin-top:10px; border-radius:12px; overflow:hidden; border:1px solid var(--surface2); position:relative; max-width:380px; }
 .img-wrap img { width:100%; display:block; }
 .dl-btn {
@@ -150,6 +185,9 @@ header {
   display:flex; align-items:center; justify-content:center; cursor:pointer;
 }
 .dl-btn svg { width:14px; height:14px; }
+.img-enhanced-prompt {
+  margin-top:6px; font-size:.75rem; color:var(--dim); font-style:italic; padding:0 2px;
+}
 
 .thinking {
   display:none; align-items:center; gap:8px;
@@ -159,7 +197,56 @@ header {
 .dot:nth-child(2){animation-delay:.2s} .dot:nth-child(3){animation-delay:.4s}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
 
-/* ── Input ────────────────────────────────────────────── */
+/* ═══ TOOLS PANEL ═══════════════════════════════════════════════════════════ */
+.tools-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  padding:4px 0 8px;
+}
+.tool-card {
+  background:var(--surface); border:1px solid var(--surface2);
+  border-radius:16px; padding:14px 16px; cursor:pointer;
+  transition:.15s; display:flex; flex-direction:column; gap:6px;
+}
+.tool-card:hover { border-color:var(--surface3); background:var(--surface2); }
+.tool-card:active { transform:scale(.97); }
+.tool-icon { font-size:1.5rem; }
+.tool-name { font-size:.88rem; font-weight:600; }
+.tool-desc { font-size:.76rem; color:var(--dim); line-height:1.4; }
+
+/* ── Tool Q&A flow ── */
+.tool-flow {
+  background:var(--surface); border:1px solid var(--surface2);
+  border-radius:16px; padding:16px; max-width:92%; align-self:flex-start;
+  animation:fadeUp .3s ease-out;
+}
+.tool-flow-title {
+  font-family:'Syne',sans-serif; font-size:.9rem; font-weight:700;
+  margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.tool-question { font-size:.92rem; margin-bottom:10px; line-height:1.5; }
+.tool-options { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:8px; }
+.tool-opt {
+  background:var(--surface2); border:1px solid var(--surface3);
+  color:var(--text); border-radius:20px; padding:6px 14px;
+  font-size:.82rem; cursor:pointer; transition:.15s; font-family:'DM Sans',sans-serif;
+}
+.tool-opt:hover { border-color:#444; background:var(--surface3); }
+.tool-opt.selected { border-color:var(--accent); background:rgba(255,255,255,.08); color:#fff; }
+.tool-input {
+  width:100%; background:var(--surface2); border:1px solid var(--surface3);
+  color:var(--text); border-radius:10px; padding:9px 12px;
+  font-family:'DM Sans',sans-serif; font-size:.88rem; outline:none; margin-bottom:8px;
+}
+.tool-input:focus { border-color:#444; }
+.tool-next {
+  background:#fff; color:#000; border:none; border-radius:10px;
+  padding:9px 20px; font-size:.85rem; font-weight:600; cursor:pointer;
+  font-family:'DM Sans',sans-serif; transition:.15s; margin-top:4px;
+}
+.tool-next:active { transform:scale(.96); }
+.tool-skip { background:none; border:none; color:var(--dim); font-size:.78rem; cursor:pointer; margin-left:8px; }
+
+/* ═══ INPUT ══════════════════════════════════════════════════════════════════ */
 .input-section {
   padding:10px 14px 18px;
   padding-bottom:max(18px, calc(env(safe-area-inset-bottom) + 10px));
@@ -175,7 +262,7 @@ header {
   width:42px; height:42px; border-radius:50%; border:none;
   background:transparent; color:var(--dim);
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; flex-shrink:0;
+  cursor:pointer; flex-shrink:0; transition:.15s;
 }
 .action-btn:active { background:var(--surface2); color:var(--text); }
 .action-btn svg { width:20px; height:20px; }
@@ -190,15 +277,29 @@ header {
   display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
 }
 .send-btn svg { width:19px; height:19px; }
-
 .img-preview { display:none; padding:8px 14px 0; gap:8px; align-items:center; }
 .img-preview img { width:46px; height:46px; object-fit:cover; border-radius:8px; border:1px solid #333; }
 .img-preview span { font-size:.83rem; color:var(--dim); }
 .img-preview button { margin-left:auto; background:none; border:none; color:var(--dim); cursor:pointer; font-size:1.2rem; }
 
-/* ═══════════════════════════════════════════════════════
-   MODALS / OVERLAYS
-═══════════════════════════════════════════════════════ */
+/* ── Tools trigger button ── */
+.tools-trigger {
+  display:flex; align-items:center; gap:6px;
+  max-width:800px; margin:0 auto 6px;
+  overflow-x:auto; padding:0 2px;
+  scrollbar-width:none;
+}
+.tools-trigger::-webkit-scrollbar { display:none; }
+.trigger-chip {
+  background:var(--surface); border:1px solid var(--surface2);
+  color:var(--dim); border-radius:20px; padding:5px 12px;
+  font-size:.78rem; cursor:pointer; white-space:nowrap; transition:.15s;
+  font-family:'DM Sans',sans-serif; flex-shrink:0;
+}
+.trigger-chip:hover { border-color:#444; color:var(--text); }
+.trigger-chip:active { background:var(--surface2); }
+
+/* ═══ MODALS ════════════════════════════════════════════════════════════════ */
 .overlay {
   position:fixed; inset:0; background:rgba(0,0,0,.88);
   display:none; align-items:center; justify-content:center;
@@ -221,7 +322,6 @@ header {
 .about { margin-top:18px; padding-top:18px; border-top:1px solid var(--surface2); text-align:center; }
 .about p { color:var(--dim); font-size:.88rem; }
 .about strong { font-family:'Syne',sans-serif; display:block; margin:4px 0; font-size:1rem; }
-
 .setting-row { display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--surface2); }
 .setting-row:last-child { border-bottom:none; }
 .setting-label { font-size:.93rem; }
@@ -231,9 +331,7 @@ header {
 .toggle::after { content:''; position:absolute; width:20px; height:20px; border-radius:50%; background:#000; top:3px; left:3px; transition:.2s; }
 .toggle.on::after { left:21px; }
 
-/* ═══════════════════════════════════════════════════════
-   LOCK SCREEN
-═══════════════════════════════════════════════════════ */
+/* ═══ LOCK SCREEN ════════════════════════════════════════════════════════════ */
 #lockScreen {
   position:fixed; inset:0; z-index:9999; background:#000;
   display:none; flex-direction:column;
@@ -252,7 +350,6 @@ header {
 .pin-key.del { font-size:.95rem; color:var(--dim); }
 .pin-error { color:#ff4444; font-size:.83rem; min-height:18px; text-align:center; animation:shake .3s; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-
 .shake-hint {
   position:fixed; bottom:88px; left:50%; transform:translateX(-50%);
   background:var(--surface2); border:1px solid var(--surface3);
@@ -290,6 +387,9 @@ header {
       <div class="brand">KIYANA</div>
     </div>
     <div class="header-right">
+      <button class="icon-btn" id="toolsBtn" title="Tools">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/></svg>
+      </button>
       <button class="icon-btn" id="settingsBtn" title="Settings">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -304,484 +404,4 @@ header {
   </div>
 
   <div class="img-preview" id="imgPreview">
-    <img id="previewThumb" src="" alt="">
-    <span>Image attached</span>
-    <button id="clearImg">×</button>
-  </div>
-
-  <div class="input-section">
-    <div class="input-bar">
-      <button class="action-btn" id="analyzeBtn" title="Analyze Image">
-        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>
-      </button>
-      <button class="action-btn" id="genBtn" title="Generate Image">
-        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5z"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75z"/></svg>
-      </button>
-      <textarea id="msgInput" rows="1" placeholder="Say something…"></textarea>
-      <button class="send-btn" id="sendBtn">
-        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
-
-<input type="file" id="fileInput" accept="image/*" style="display:none">
-<div class="shake-hint" id="shakeHint">Shake to lock</div>
-
-<!-- ══ LOCK SCREEN ═══════════════════════════════════════════════════════════ -->
-<div id="lockScreen">
-  <div class="lock-icon">
-    <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-  </div>
-  <div class="lock-title">KIYANA IS LOCKED</div>
-  <div class="pin-dots" id="pinDots">
-    <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
-    <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
-  </div>
-  <div class="pin-pad" id="pinPad"></div>
-  <div class="pin-error" id="pinError"></div>
-</div>
-
-<!-- ══ SETTINGS ══════════════════════════════════════════════════════════════ -->
-<div class="overlay" id="settingsOverlay">
-  <div class="modal">
-    <h3>Settings</h3>
-    <div class="setting-row">
-      <div>
-        <div class="setting-label">Shake to Lock</div>
-        <div class="setting-sub" id="lockSub">Shake phone to lock with PIN</div>
-      </div>
-      <button class="toggle" id="lockToggle"></button>
-    </div>
-    <div style="margin-top:14px">
-      <button class="modal-btn ghost" id="closeSettings">Close</button>
-    </div>
-    <div class="about"><p>Crafted by</p><strong>San Tech</strong></div>
-  </div>
-</div>
-
-<!-- ══ PIN SETUP ═════════════════════════════════════════════════════════════ -->
-<div class="overlay" id="pinSetupOverlay">
-  <div class="modal" style="text-align:center">
-    <h3>Set a PIN</h3>
-    <p style="color:var(--dim);font-size:.88rem;margin-bottom:22px">Choose a 4-digit PIN to lock your chat.</p>
-    <div class="pin-dots" style="justify-content:center;margin-bottom:18px" id="setupDots">
-      <div class="pin-dot" id="sd0"></div><div class="pin-dot" id="sd1"></div>
-      <div class="pin-dot" id="sd2"></div><div class="pin-dot" id="sd3"></div>
-    </div>
-    <div class="pin-pad" style="margin:0 auto 14px" id="setupPad"></div>
-    <div class="pin-error" id="setupError"></div>
-    <button class="modal-btn ghost" id="cancelPinSetup" style="margin-top:8px">Cancel</button>
-  </div>
-</div>
-
-<script>
-/* ═══════════════════════════════════════════════════════════════════════════
-   CONFIG
-═══════════════════════════════════════════════════════════════════════════ */
-const API = 'https://kiyana-ai.vercel.app';
-
-const SESSIONS_KEY  = 'kiyana_sessions_v2';
-const IMG_KEY       = 'kiyana_imgs';
-const PIN_KEY       = 'kiyana_pin';
-const LOCK_KEY      = 'kiyana_lock_enabled';
-const LASTOPEN_KEY  = 'kiyana_last_open';
-const ACTIVE_ID_KEY = 'kiyana_active_id';
-
-const MAX_IMG_HISTORY = 5;
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════════════════════════════════════ */
-let sessions     = JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]');
-let imgHistory   = JSON.parse(localStorage.getItem(IMG_KEY)      || '[]');
-let currentId    = null;
-let messages     = [];
-let pendingBase64= null;
-
-const viewport     = document.getElementById('viewport');
-const msgInput     = document.getElementById('msgInput');
-const thinking     = document.getElementById('thinking');
-const thinkLabel   = document.getElementById('thinkLabel');
-const imgPreview   = document.getElementById('imgPreview');
-const previewThumb = document.getElementById('previewThumb');
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   SESSION HELPERS
-═══════════════════════════════════════════════════════════════════════════ */
-function saveSessions(){ localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions)); }
-function saveImgs() { localStorage.setItem(IMG_KEY, JSON.stringify(imgHistory.slice(0, MAX_IMG_HISTORY))); }
-function getSession(id){ return sessions.find(s => s.id === id); }
-
-function persistCurrentMessages(){
-  if(!currentId) return;
-  const s = getSession(currentId);
-  if(s){ s.messages = JSON.parse(JSON.stringify(messages)); s.ts = Date.now(); saveSessions(); }
-}
-
-function createNewSession(){
-  const id  = Date.now();
-  const s   = { id, name:'New Chat', ts:id, messages:[] };
-  sessions.unshift(s);
-  saveSessions();
-  currentId = id;
-  messages  = [];
-  viewport.innerHTML = '';
-  renderMsg('ai', buildContextualGreeting());
-  persistCurrentMessages();
-  renderSidebar();
-}
-
-async function autoNameSession(){
-  const s = getSession(currentId);
-  if(!s || s.name !== 'New Chat') return;
-  const userMessages = messages.filter(m => m.role === 'user');
-  if(userMessages.length !== 1) return;
-  try{
-    const formattedMessages = messages.map(m => ({ role: m.role, content: m.text || '' }));
-    const res = await fetch(`${API}/api/name-chat`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ messages: formattedMessages })
-    });
-    const data = await res.json();
-    if(data.name && data.name !== 'Chat' && s){
-      s.name = data.name;
-      saveSessions();
-      renderSidebar();
-    }
-  }catch(e){ console.log('Auto-name failed:', e); }
-}
-
-function loadSession(id) {
-  if (id === currentId) { closeSidebar(); return; }
-  persistCurrentMessages();
-  const s = getSession(id);
-  if (!s) return;
-  currentId = id;
-  messages  = JSON.parse(JSON.stringify(s.messages));
-  viewport.innerHTML = '';
-  messages.forEach(m => renderMsg(m.role, m.text, m.imageUrl, m.isUserImg));
-  viewport.scrollTop = viewport.scrollHeight;
-  renderSidebar();
-  closeSidebar();
-}
-
-function deleteSession(e, id) {
-  e.stopPropagation();
-  sessions = sessions.filter(s => s.id !== id);
-  saveSessions();
-  if (id === currentId) {
-    if (sessions.length) {
-      loadSession(sessions[0].id);
-    } else {
-      currentId = null; messages = [];
-      viewport.innerHTML = '';
-      createNewSession();
-    }
-  } else {
-    renderSidebar();
-  }
-}
-
-function renameSession(e, id) {
-  e.stopPropagation();
-  const s = getSession(id);
-  if (!s) return;
-  const newName = prompt('Enter new chat name:', s.name);
-  if (newName && newName.trim()) {
-    s.name = newName.trim();
-    saveSessions();
-    renderSidebar();
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   SIDEBAR RENDER
-═══════════════════════════════════════════════════════════════════════════ */
-function renderSidebar() {
-  const el = document.getElementById('sidebarSessions');
-  if (!sessions.length) {
-    el.innerHTML = '<div class="sidebar-empty">No chats yet</div>';
-    return;
-  }
-  el.innerHTML = sessions.map(s => `
-    <div class="session-item${s.id === currentId ? ' active' : ''}" onclick="loadSession(${s.id})" ondblclick="renameSession(event, ${s.id})">
-      <div class="session-name">${escHtml(s.name)}</div>
-      <div class="session-meta">${formatDate(s.ts)}</div>
-      <button class="session-del" onclick="deleteSession(event,${s.id})">×</button>
-    </div>
-  `).join('');
-}
-
-function openSidebar()  {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebarMask').classList.add('show');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarMask').classList.remove('show');
-}
-
-document.getElementById('sidebarToggle').onclick = openSidebar;
-document.getElementById('sidebarClose').onclick  = closeSidebar;
-document.getElementById('sidebarMask').onclick   = closeSidebar;
-document.getElementById('newChatBtn').onclick    = () => { createNewSession(); closeSidebar(); };
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   CONTEXTUAL GREETING
-═══════════════════════════════════════════════════════════════════════════ */
-function buildContextualGreeting() {
-  const hour = new Date().getHours();
-  const lastOpen  = parseInt(localStorage.getItem(LASTOPEN_KEY) || '0');
-  const gapHours  = (Date.now() - lastOpen) / 3600000;
-  const gapDays   = gapHours / 24;
-  localStorage.setItem(LASTOPEN_KEY, Date.now().toString());
-  const tg = hour<5?"It's pretty late…":hour<12?"Good morning!":hour<17?"Hey, good afternoon.":hour<21?"Good evening!":"Up late tonight?";
-  if (!lastOpen) return "Hey! I'm Kiyana. Nice to meet you 😊";
-  if (gapDays>=7)  return `${tg} It's been over a week — I missed you.`;
-  if (gapDays>=2)  return `${tg} You've been gone ${Math.floor(gapDays)} days. Everything good?`;
-  if (gapHours>=20)return `${tg} Slept okay? What's on your mind?`;
-  if (gapHours>=6) return `${tg} Welcome back. What's up?`;
-  if (gapHours>=1) return "Hey, you're back. Miss me already?";
-  return ["Back so soon? I like it 😏","Forgot something?","Couldn't stay away, huh?","Already back — what's up?"][Math.floor(Math.random()*4)];
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   SHAKE TO LOCK
-═══════════════════════════════════════════════════════════════════════════ */
-let lockEnabled=localStorage.getItem(LOCK_KEY)==='true', storedPin=localStorage.getItem(PIN_KEY)||'';
-let isLocked=false,pinEntry='',setupEntry='',setupPhase=0,setupFirst='';
-let lastX=0,lastY=0,lastZ=0,shakeTs=0;
-
-function attachShakeListener(){
-  window.addEventListener('devicemotion',e=>{
-    if(!lockEnabled||isLocked) return;
-    const {x,y,z}=e.accelerationIncludingGravity||{};
-    if(x==null) return;
-    const delta=Math.abs(x-lastX)+Math.abs(y-lastY)+Math.abs(z-lastZ);
-    lastX=x;lastY=y;lastZ=z;
-    if(delta>18&&Date.now()-shakeTs>2000){shakeTs=Date.now();triggerLock();}
-  });
-}
-
-if(typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
-  window._needsMotionPermission = true;
-} else {
-  attachShakeListener();
-  window._needsMotionPermission = false;
-}
-
-function showShakeHint(){const h=document.getElementById('shakeHint');h.classList.add('show');setTimeout(()=>h.classList.remove('show'),2500);}
-function triggerLock(){if(!storedPin)return;isLocked=true;pinEntry='';updatePinDots('pinDots',0);document.getElementById('pinError').textContent='';document.getElementById('lockScreen').classList.add('show');}
-function tryUnlock(d){pinEntry+=d;updatePinDots('pinDots',pinEntry.length);if(pinEntry.length===4){if(pinEntry===storedPin){isLocked=false;document.getElementById('lockScreen').classList.remove('show');pinEntry='';}else{document.getElementById('pinError').textContent='Wrong PIN';setTimeout(()=>{pinEntry='';updatePinDots('pinDots',0);document.getElementById('pinError').textContent='';},700);}}}
-function updatePinDots(cid,n){for(let i=0;i<4;i++)document.getElementById(cid==='pinDots'?`d${i}`:`sd${i}`).classList.toggle('filled',i<n);}
-function buildPinPad(pid,onD,onDel){const p=document.getElementById(pid);p.innerHTML='';[1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(k=>{const b=document.createElement('button');b.className='pin-key'+(k==='⌫'?' del':'');b.textContent=k;if(k!=='')b.onclick=()=>k==='⌫'?onDel():onD(String(k));else b.style.background='transparent';p.appendChild(b);});}
-buildPinPad('pinPad',d=>tryUnlock(d),()=>{pinEntry=pinEntry.slice(0,-1);updatePinDots('pinDots',pinEntry.length);});
-buildPinPad('setupPad',d=>{
-  if(setupEntry.length>=4)return;
-  setupEntry+=d;updatePinDots('setupDots',setupEntry.length);
-  if(setupEntry.length===4){
-    if(setupPhase===0){setupFirst=setupEntry;setupEntry='';setupPhase=1;document.getElementById('setupError').textContent='Confirm your PIN';updatePinDots('setupDots',0);}
-    else{
-      if(setupEntry===setupFirst){storedPin=setupEntry;localStorage.setItem(PIN_KEY,storedPin);lockEnabled=true;localStorage.setItem(LOCK_KEY,'true');updateLockUI();document.getElementById('pinSetupOverlay').classList.remove('show');setupEntry='';setupPhase=0;setupFirst='';showShakeHint();}
-      else{document.getElementById('setupError').textContent="PINs don't match";setupEntry='';setupPhase=0;setupFirst='';updatePinDots('setupDots',0);}
-    }
-  }
-},()=>{setupEntry=setupEntry.slice(0,-1);updatePinDots('setupDots',setupEntry.length);});
-
-function updateLockUI(){const t=document.getElementById('lockToggle'),s=document.getElementById('lockSub');t.classList.toggle('on',lockEnabled);s.textContent=lockEnabled?'Shake phone to lock · PIN is set':'Shake phone to lock chat with PIN';}
-updateLockUI();
-
-document.getElementById('lockToggle').onclick = async () => {
-  if(!lockEnabled){
-    if(window._needsMotionPermission){
-      try{
-        const perm = await DeviceMotionEvent.requestPermission();
-        if(perm === 'granted'){
-          attachShakeListener();
-          window._needsMotionPermission = false;
-        } else {
-          alert('Motion permission denied. Shake-to-lock requires motion access.');
-          return;
-        }
-      }catch(e){ console.warn('Motion permission error', e); }
-    }
-    setupEntry='';setupPhase=0;setupFirst='';updatePinDots('setupDots',0);
-    document.getElementById('setupError').textContent='Enter a 4-digit PIN';
-    document.getElementById('pinSetupOverlay').classList.add('show');
-    document.getElementById('settingsOverlay').classList.remove('show');
-  } else {
-    lockEnabled=false;storedPin='';localStorage.removeItem(PIN_KEY);localStorage.setItem(LOCK_KEY,'false');updateLockUI();
-  }
-};
-document.getElementById('cancelPinSetup').onclick=()=>{document.getElementById('pinSetupOverlay').classList.remove('show');setupEntry='';setupPhase=0;};
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   RENDER HELPERS
-═══════════════════════════════════════════════════════════════════════════ */
-const _dlUrlMap = {};
-
-function renderMsg(role, text, imageUrl, isUserImg){
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-
-  let imgHtml = '';
-  if(imageUrl){
-    const safeUrl = imageUrl.startsWith('data:') ? imageUrl : escHtml(imageUrl);
-    if(!isUserImg){
-      const dlKey = '_dl_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-      _dlUrlMap[dlKey] = imageUrl;
-      imgHtml = `<div class="img-wrap">
-        <img src="${safeUrl}" alt="" loading="lazy">
-        <button class="dl-btn" data-dlkey="${dlKey}">
-          <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </button>
-      </div>`;
-    } else {
-      imgHtml = `<div class="img-wrap"><img src="${safeUrl}" alt="" loading="lazy"></div>`;
-    }
-  }
-
-  div.innerHTML = `<div class="bubble"><span class="bubble-text"></span>${imgHtml}</div>`;
-  div.querySelector('.bubble-text').textContent = text;
-  viewport.appendChild(div);
-  viewport.scrollTop = viewport.scrollHeight;
-}
-
-viewport.addEventListener('click', e => {
-  const btn = e.target.closest('.dl-btn');
-  if(!btn) return;
-  const url = _dlUrlMap[btn.dataset.dlkey];
-  if(url) dlImg(url);
-});
-
-function addMsg(role, text, imageUrl, isUserImg){
-  const entry = { role, text, imageUrl, isUserImg };
-  messages.push(entry);
-  renderMsg(role, text, imageUrl, isUserImg);
-  persistCurrentMessages();
-  if(role === 'assistant') autoNameSession();
-}
-
-function escHtml(s=''){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-function formatDate(ts){
-  const d=new Date(ts),dd=Math.floor((Date.now()-d)/86400000);
-  if(dd===0)return'Today · '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  if(dd===1)return'Yesterday';
-  if(dd<7)return d.toLocaleDateString([],{weekday:'long'});
-  return d.toLocaleDateString([],{day:'numeric',month:'short'});
-}
-
-async function dlImg(url){
-  try{
-    if(url.startsWith('data:')){const a=document.createElement('a');a.href=url;a.download=`kiyana_${Date.now()}.jpg`;a.click();return;}
-    const r=await fetch(url);const blob=await r.blob();
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download=`kiyana_${Date.now()}.jpg`;document.body.appendChild(a);a.click();document.body.removeChild(a);
-  }catch(e){}
-}
-
-function buildHistory(){
-  return messages.slice(-20)
-    .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text || '' }))
-    .filter(m => m.content);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   CHAT API
-═══════════════════════════════════════════════════════════════════════════ */
-async function sendChat(text, base64){
-  thinkLabel.textContent='Thinking'; thinking.style.display='flex';
-  try{
-    const res=await fetch(`${API}/api/chat`,{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:text, imageBase64:base64||undefined, history:base64?undefined:buildHistory()})
-    });
-    const data=await res.json();
-    if(!res.ok||data.error){addMsg('ai','Error: '+(data.error||'Something went wrong'));return null;}
-    return data.content;
-  }catch(e){addMsg('ai','Connection error: '+e.message);return null;}
-  finally{thinking.style.display='none';}
-}
-
-async function onSend(){
-  const text=msgInput.value.trim(); if(!text&&!pendingBase64)return;
-  const b64=pendingBase64; const imgSrc=b64?`data:image/jpeg;base64,${b64}`:null;
-  addMsg('user', text||'Analyzing image…', imgSrc, !!b64);
-  msgInput.value='';
-  requestAnimationFrame(() => { msgInput.style.height='auto'; });
-  pendingBase64=null; imgPreview.style.display='none';
-  const reply=await sendChat(text,b64);
-  if(reply){ addMsg('ai', reply); }
-}
-
-async function onGenerate(){
-  const prompt=msgInput.value.trim(); if(!prompt)return;
-  addMsg('user','Generate image: '+prompt);
-  msgInput.value='';
-  requestAnimationFrame(() => { msgInput.style.height='auto'; });
-  thinkLabel.textContent='Painting'; thinking.style.display='flex';
-  try{
-    const res=await fetch(`${API}/api/generate-image`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
-    const data=await res.json();
-    if(!res.ok||data.error){addMsg('ai','Failed: '+(data.error||'Unknown'));return;}
-    if(data.url){addMsg('ai','Here is your generated image.',data.url);imgHistory.unshift({url:data.url,prompt,ts:Date.now()});saveImgs();}
-  }catch(e){addMsg('ai','Connection error: '+e.message);}
-  finally{thinking.style.display='none';}
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   PERSIST ON HIDE
-═══════════════════════════════════════════════════════════════════════════ */
-document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') persistCurrentMessages(); });
-window.addEventListener('pagehide', persistCurrentMessages);
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   SETTINGS / EVENTS
-═══════════════════════════════════════════════════════════════════════════ */
-document.getElementById('settingsBtn').onclick    = ()=>document.getElementById('settingsOverlay').classList.add('show');
-document.getElementById('closeSettings').onclick  = ()=>document.getElementById('settingsOverlay').classList.remove('show');
-document.getElementById('settingsOverlay').onclick= e=>{if(e.target.id==='settingsOverlay')e.target.classList.remove('show');};
-document.getElementById('pinSetupOverlay').onclick= e=>{if(e.target.id==='pinSetupOverlay'){e.target.classList.remove('show');setupEntry='';setupPhase=0;}};
-
-document.getElementById('analyzeBtn').onclick=()=>document.getElementById('fileInput').click();
-document.getElementById('fileInput').onchange=e=>{
-  const file=e.target.files[0]; if(!file)return;
-  const reader=new FileReader();
-  reader.onload=f=>{pendingBase64=f.target.result.split(',')[1];previewThumb.src=f.target.result;imgPreview.style.display='flex';msgInput.focus();};
-  reader.readAsDataURL(file); e.target.value='';
-};
-document.getElementById('clearImg').onclick=()=>{pendingBase64=null;imgPreview.style.display='none';};
-document.getElementById('genBtn').onclick =onGenerate;
-document.getElementById('sendBtn').onclick=onSend;
-msgInput.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();onSend();}};
-msgInput.oninput=function(){
-  this.style.height='auto';
-  this.style.height=Math.min(this.scrollHeight,120)+'px';
-};
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   BOOT — restore last session or create new
-═══════════════════════════════════════════════════════════════════════════ */
-(function boot(){
-  if(sessions.length){
-    const s=sessions[0];
-    currentId=s.id;
-    messages=JSON.parse(JSON.stringify(s.messages));
-    if(messages.length){
-      messages.forEach(m=>renderMsg(m.role,m.text,m.imageUrl,m.isUserImg));
-      viewport.scrollTop=viewport.scrollHeight;
-    } else {
-      renderMsg('ai',buildContextualGreeting());
-      persistCurrentMessages();
-    }
-  } else {
-    createNewSession();
-  }
-  renderSidebar();
-})();
-</script>
-</body>
-</html>
+ 
